@@ -42,6 +42,7 @@ type ExternalProps = {
 
 type PropsWithoutContext = {
     fileId: string,
+    onMetadataScan?: Function,
 } & ExternalProps;
 
 type Props = {
@@ -374,6 +375,7 @@ class MetadataSidebar extends React.PureComponent<Props, State> {
 
     render() {
         const { editors, file, error, isLoading, templates }: State = this.state;
+        const { onMetadataScan }: Props = this.props;
         const showEditor = !!file && !!templates && !!editors;
         const showLoadingIndicator = !error && !showEditor;
         const canEdit = this.canEdit();
@@ -414,6 +416,7 @@ class MetadataSidebar extends React.PureComponent<Props, State> {
                                 onModification={this.onModification}
                                 onRemove={this.onRemove}
                                 onSave={this.onSave}
+                                onMetadataScan={onMetadataScan}
                             />
                         )}
                     </LoadingIndicatorWrapper>

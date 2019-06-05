@@ -14,7 +14,9 @@ type Props = {
     displayName: string,
     error?: React.Node,
     intl: any,
+    isFocused?: boolean,
     onChange: (key: string, value: MetadataFieldValue) => void,
+    onFocusChange?: Function,
     onRemove: (key: string) => void,
     type?: string,
 };
@@ -26,7 +28,9 @@ const TextField = ({
     description,
     error,
     intl,
+    isFocused,
     onChange,
+    onFocusChange,
     onRemove,
     type = 'text',
 }: Props) => {
@@ -44,6 +48,7 @@ const TextField = ({
             description={description}
             error={error}
             hideOptionalLabel
+            isFocused={isFocused}
             label={displayName}
             onChange={(event: SyntheticKeyboardEvent<HTMLInputElement>) => {
                 const currentTarget = (event.currentTarget: HTMLInputElement);
@@ -53,6 +58,7 @@ const TextField = ({
                     onRemove(dataKey);
                 }
             }}
+            onFocus={() => onFocusChange(dataKey)}
             placeholder={intl.formatMessage(messages.metadataFieldSetValue)}
             type={type}
             value={value}

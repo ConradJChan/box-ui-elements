@@ -12,6 +12,7 @@ import Tooltip from '../../components/tooltip';
 import IconMetadataColored from '../../icons/general/IconMetadataColored';
 import IconAlertCircle from '../../icons/general/IconAlertCircle';
 import IconEdit from '../../icons/general/IconEdit';
+import IconTag from '../../icons/general/IconTag';
 import { kingCrimson } from '../../styles/variables';
 import { scrollIntoView } from '../../utils/dom';
 
@@ -44,6 +45,7 @@ type Props = {
     isCascadingPolicyApplicable?: boolean,
     isDirty: boolean,
     isOpen: boolean,
+    onMetadataScan?: Function,
     onModification?: (id: string, isDirty: boolean, type?: string) => void,
     onRemove?: (id: string) => void,
     onSave?: (
@@ -58,6 +60,7 @@ type Props = {
 type State = {
     data: Object,
     errors: { [string]: React.Node },
+    focusedData: string,
     isBusy: boolean,
     isCascadingEnabled: boolean,
     isCascadingOverwritten: boolean,
@@ -562,6 +565,7 @@ class Instance extends React.PureComponent<Props, State> {
                         className={editClassName}
                         data-resin-target="metadata-instanceedit"
                         onClick={this.toggleIsEditing}
+                        style={{ right: '56px' }}
                         type="button"
                     >
                         <IconEdit />
@@ -572,12 +576,59 @@ class Instance extends React.PureComponent<Props, State> {
         return null;
     };
 
+    renderScanButton = () => {
+        const { isDirty, onMetadataScan }: Props = this.props;
+        const { isBusy }: State = this.state;
+        const canEdit = this.canEdit();
+        const isEditing = this.isEditing();
+        const editClassName = classNames('metadata-instance-editor-instance-edit', {
+            'metadata-instance-editor-instance-is-editing': isEditing,
+        });
+
+        if (canEdit && !isDirty && !isBusy) {
+            return (
+                <Tooltip position="top-left" text="Scan For Metadata">
+                    <PlainButton
+                        className={editClassName}
+                        data-resin-target="metadata-instanceedit"
+                        onClick={() => {
+                            onMetadataScan(this.onMetadataValueClick);
+                            this.toggleIsEditing();
+                        }}
+                        type="button"
+                    >
+                        <IconTag />
+                    </PlainButton>
+                </Tooltip>
+            );
+        }
+        return null;
+    };
+
+    onMetadataValueClick = value => {
+        console.log(`onMetadataValueClick: ${value}`);
+        const { data, focusedData } = this.state;
+        const modifiedData = {
+            ...data,
+            [focusedData]: data[focusedData] ? data[focusedData].concat(` ${value}`) : value,
+        };
+        console.log(modifiedData);
+        this.setState({ data: modifiedData }, () => {
+            this.setDirty('string');
+        });
+    };
+
+    onFocusChange = dataKey => {
+        this.setState({ focusedData: dataKey });
+    };
+
     render() {
         const { cascadePolicy = {}, isDirty, isCascadingPolicyApplicable, isOpen, template }: Props = this.props;
         const { fields = [] } = template;
         const {
             data,
             errors,
+            focusedData,
             isBusy,
             isCascadingEnabled,
             shouldConfirmRemove,
@@ -602,7 +653,12 @@ class Instance extends React.PureComponent<Props, State> {
                         [RESIN_TAG_TARGET]: 'metadata-card',
                     }}
                     hasStickyHeader
-                    headerActionItems={this.renderEditButton()}
+                    headerActionItems={
+                        <div>
+                            {this.renderEditButton()}
+                            {this.renderScanButton()}
+                        </div>
+                    }
                     isBordered
                     isOpen={isOpen}
                     title={this.getTitle()}
@@ -642,8 +698,10 @@ class Instance extends React.PureComponent<Props, State> {
                                         canEdit={isEditing}
                                         data={data}
                                         errors={errors}
+                                        focusedData={focusedData}
                                         onFieldChange={this.onFieldChange}
                                         onFieldRemove={this.onFieldRemove}
+                                        onFocusChange={this.onFocusChange}
                                         template={template}
                                     />
                                 )}

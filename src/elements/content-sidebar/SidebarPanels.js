@@ -39,6 +39,7 @@ type Props = {
     hasVersions: boolean,
     isOpen: boolean,
     metadataSidebarProps: MetadataSidebarProps,
+    onMetadataScan?: Function,
     onVersionChange?: Function,
     onVersionHistoryClick?: Function,
     selectedView?: SidebarView,
@@ -82,6 +83,7 @@ const SidebarPanels = ({
     hasVersions,
     isOpen,
     metadataSidebarProps,
+    onMetadataScan,
     onVersionChange,
     onVersionHistoryClick,
 }: Props) =>
@@ -146,6 +148,7 @@ const SidebarPanels = ({
                         <LoadableMetadataSidebar
                             fileId={fileId}
                             startMarkName={MARK_NAME_JS_LOADING_METADATA}
+                            onMetadataScan={onMetadataScan}
                             {...metadataSidebarProps}
                         />
                     )

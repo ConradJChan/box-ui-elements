@@ -23,6 +23,7 @@ type Props = {
     /** Hides (optional) text from the label */
     hideOptionalLabel?: boolean,
     inputRef?: Function, // @TODO: eventually rename to innerRef for consistancy across all form elements
+    isFocused?: Boolean,
     /** Renders a loading indicator within the component when true */
     isLoading?: boolean,
     /** Makes the input value required */
@@ -42,6 +43,7 @@ const TextInput = ({
     hideLabel,
     hideOptionalLabel,
     inputRef,
+    isFocused,
     isLoading,
     isRequired,
     isValid,
@@ -63,7 +65,7 @@ const TextInput = ({
             >
                 {!!description && <i className="text-input-description">{description}</i>}
                 <Tooltip isShown={!!error} position={errorPosition || 'middle-right'} text={error || ''} theme="error">
-                    <input ref={inputRef} required={isRequired} {...rest} />
+                    <input ref={inputRef} required={isRequired} {...rest} className={isFocused ? 'force-focus' : ''} />
                 </Tooltip>
                 {isLoading && !isValid && <LoadingIndicator className="text-input-loading" />}
                 {isValid && !isLoading && <IconVerified className="text-input-verified" />}

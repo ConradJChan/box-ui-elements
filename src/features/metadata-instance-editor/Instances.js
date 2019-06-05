@@ -6,6 +6,7 @@ import Instance from './Instance';
 type Props = {
     editors?: Array<MetadataEditor>,
     isCascadingPolicyApplicable?: boolean,
+    onMetadataScan?: Function,
     onModification?: (id: string, isDirty: boolean) => void,
     onRemove?: (id: string) => void,
     onSave?: (
@@ -16,7 +17,14 @@ type Props = {
     ) => void,
 };
 
-const Instances = ({ isCascadingPolicyApplicable = false, editors = [], onModification, onRemove, onSave }: Props) =>
+const Instances = ({
+    isCascadingPolicyApplicable = false,
+    editors = [],
+    onMetadataScan,
+    onModification,
+    onRemove,
+    onSave,
+}: Props) =>
     editors.map<React.Element<typeof Instance>>(
         ({ isDirty = false, instance, hasError = false, template }: MetadataEditor) => (
             <Instance
@@ -33,6 +41,7 @@ const Instances = ({ isCascadingPolicyApplicable = false, editors = [], onModifi
                 onSave={onSave}
                 onRemove={onRemove}
                 template={template}
+                onMetadataScan={onMetadataScan}
             />
         ),
     );

@@ -29,8 +29,10 @@ type Props = {
     description?: string,
     displayName: string,
     error?: React.Node,
+    isFocused?: boolean,
     isHidden?: boolean,
     onChange?: (key: string, value: MetadataFieldValue) => void,
+    onFocusChange?: Function,
     onRemove?: (key: string) => void,
     options?: Array<MetadataTemplateFieldOption>,
     type: MetadataFieldType,
@@ -42,9 +44,11 @@ const Field = ({
     displayName,
     description,
     error,
+    isFocused,
     isHidden,
     canEdit,
     onChange,
+    onFocusChange,
     onRemove,
     options,
     type,
@@ -69,7 +73,9 @@ const Field = ({
                     dataValue={dataValue}
                     description={description}
                     displayName={displayName}
+                    isFocused={isFocused}
                     onChange={onChange}
+                    onFocusChange={onFocusChange}
                     onRemove={onRemove}
                 />
             );

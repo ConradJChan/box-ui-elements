@@ -1,4 +1,5 @@
 @import '../../styles/variables';
+@import '../../styles/inputs';
 
 /**************************************
  * Text Input
@@ -51,5 +52,9 @@
         input {
             border-color: $amaranth;
         }
+    }
+
+    input[type='text'].force-focus {
+        @include box-inputs-focus;
     }
 }

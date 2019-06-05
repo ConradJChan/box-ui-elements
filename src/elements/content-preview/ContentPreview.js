@@ -73,6 +73,7 @@ type Props = {
     onClose?: Function,
     onDownload: Function,
     onLoad: Function,
+    onMetadataScan: Function,
     onNavigate: Function,
     onVersionChange: OnVersionChange,
     previewLibraryVersion: string,
@@ -188,6 +189,7 @@ class ContentPreview extends PureComponent<Props, State> {
         onDownload: noop,
         onError: noop,
         onLoad: noop,
+        onMetadataScan: noop,
         onNavigate: noop,
         onVersionChange: noop,
         previewLibraryVersion: DEFAULT_PREVIEW_VERSION,
@@ -718,6 +720,13 @@ class ContentPreview extends PureComponent<Props, State> {
         this.preview.addListener('preview_metric', this.onPreviewMetric);
         this.preview.addListener('thumbnailsOpen', () => this.setState({ isThumbnailSidebarOpen: true }));
         this.preview.addListener('thumbnailsClose', () => this.setState({ isThumbnailSidebarOpen: false }));
+        this.preview.addListener('viewerevent', event => {
+            const { event: eventName, data } = event;
+            console.log(`received ${eventName} and ${data}`);
+            if (eventName === 'metadata-click') {
+                this.sendMetadata(data);
+            }
+        });
         this.preview.updateFileCache([file]);
         this.preview.show(file.id, token, {
             ...previewOptions,
@@ -1062,6 +1071,12 @@ class ContentPreview extends PureComponent<Props, State> {
         });
     };
 
+    onMetadataScan = (callback: Function): void => {
+        console.log('onMetadataScan');
+        this.preview.getCurrentViewer().performOCR();
+        this.sendMetadata = callback;
+    };
+
     /**
      * Holds the reference the preview container
      *
@@ -1176,6 +1191,7 @@ class ContentPreview extends PureComponent<Props, State> {
                                 sharedLinkPassword={sharedLinkPassword}
                                 requestInterceptor={requestInterceptor}
                                 responseInterceptor={responseInterceptor}
+                                onMetadataScan={this.onMetadataScan}
                                 onVersionChange={this.onVersionChange}
                             />
                         )}

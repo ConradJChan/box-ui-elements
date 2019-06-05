@@ -42,6 +42,7 @@ type Props = {
     location: Location,
     metadataEditors?: Array<MetadataEditor>,
     metadataSidebarProps: MetadataSidebarProps,
+    onMetadataScan?: Function,
     onVersionChange?: Function,
     onVersionHistoryClick?: Function,
 };
@@ -179,6 +180,7 @@ class Sidebar extends React.Component<Props, State> {
             isLoading,
             metadataEditors,
             metadataSidebarProps,
+            onMetadataScan,
             onVersionChange,
         }: Props = this.props;
 
@@ -227,6 +229,7 @@ class Sidebar extends React.Component<Props, State> {
                             isOpen={isOpen}
                             key={file.id}
                             metadataSidebarProps={metadataSidebarProps}
+                            onMetadataScan={onMetadataScan}
                             onVersionChange={onVersionChange}
                             onVersionHistoryClick={onVersionHistoryClick}
                         />
