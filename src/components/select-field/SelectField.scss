@@ -1,13 +1,19 @@
 @import '../../styles/variables';
 
 .select-field {
+    margin-top: 0;
+
     .overlay {
         min-width: 100%;
     }
 
-    li[role='separator'] {
-        margin: 10px 0;
-        border-bottom: 1px solid $bdl-gray-20;
+    // li[role='separator'] {
+    //     margin: 10px 0;
+    //     border-bottom: 1px solid $bdl-gray-20;
+    // }
+
+    .aria-menu {
+        border-radius: 0;
     }
 }
 

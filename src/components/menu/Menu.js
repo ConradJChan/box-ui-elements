@@ -21,7 +21,9 @@ type Props = {
     initialFocusIndex?: number,
     isHidden?: boolean,
     isSubmenu?: boolean,
+    multiple: boolean,
     onClose?: Function,
+    role?: 'listbox' | 'menu',
     /** Will fire this callback when menu should "close' */
     setRef?: Function,
     shouldOutlineFocus?: boolean,
@@ -32,6 +34,7 @@ class Menu extends React.Component<Props> {
         className: '',
         isSubmenu: false,
         isHidden: false,
+        multiple: false,
     };
 
     constructor(props: Props) {
@@ -162,13 +165,16 @@ class Menu extends React.Component<Props> {
     };
 
     handleClick = (event: SyntheticEvent<HTMLUListElement>) => {
+        const { multiple } = this.props;
         const { menuItemEl } = event.target instanceof Node ? this.getMenuItemElFromEventTarget(event.target) : {};
 
         if (!menuItemEl) {
             return;
         }
 
-        this.fireOnCloseHandler(false, event);
+        if (!multiple) {
+            this.fireOnCloseHandler(false, event);
+        }
     };
 
     handleKeyDown = (event: SyntheticKeyboardEvent<>) => {
@@ -244,7 +250,7 @@ class Menu extends React.Component<Props> {
     };
 
     render() {
-        const { children, className, isHidden, setRef, shouldOutlineFocus, ...rest } = this.props;
+        const { children, className, isHidden, setRef, shouldOutlineFocus, role = 'menu', ...rest } = this.props;
 
         const menuProps = omit(rest, ['onClose', 'initialFocusIndex', 'isSubmenu']);
         menuProps.className = classNames('aria-menu', className, {
@@ -257,7 +263,7 @@ class Menu extends React.Component<Props> {
                 setRef(ref);
             }
         };
-        menuProps.role = 'menu';
+        menuProps.role = role;
         menuProps.tabIndex = -1;
         menuProps.onClick = this.handleClick;
         menuProps.onKeyDown = this.handleKeyDown;

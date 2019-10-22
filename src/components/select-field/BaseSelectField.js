@@ -4,18 +4,19 @@ import classNames from 'classnames';
 import uniqueId from 'lodash/uniqueId';
 
 import { scrollIntoView } from '../../utils/dom';
+import DropdownMenu from '../dropdown-menu';
 import IconCheck from '../../icons/general/IconCheck';
+import { Menu, MenuItem } from '../menu';
 import SelectButton from '../select-button';
 import DatalistItem from '../datalist-item';
 import type { SelectOptionValueProp, SelectOptionProp } from './props';
-import { OVERLAY_WRAPPER_CLASS } from '../../constants';
 
 import './SelectField.scss';
 
-function stopDefaultEvent(event) {
-    event.preventDefault();
-    event.stopPropagation();
-}
+// function stopDefaultEvent(event) {
+//     event.preventDefault();
+//     event.stopPropagation();
+// }
 
 function toggleOption(options, value) {
     const index = options.indexOf(value);
@@ -60,7 +61,6 @@ type Props = {
 type State = {
     activeItemID: ?string,
     activeItemIndex: number,
-    isOpen: boolean,
     shouldScrollIntoView: boolean,
 };
 
@@ -82,7 +82,6 @@ class BaseSelectField extends React.Component<Props, State> {
         this.state = {
             activeItemID: null,
             activeItemIndex: -1,
-            isOpen: false,
             shouldScrollIntoView: false,
         };
     }
@@ -123,80 +122,73 @@ class BaseSelectField extends React.Component<Props, State> {
         }
     };
 
-    handleButtonClick = () => {
-        if (this.state.isOpen) {
-            this.closeDropdown();
-        } else {
-            this.openDropdown();
-        }
-    };
+    // handleButtonClick = () => {
+    //     if (this.state.isOpen) {
+    //         this.closeDropdown();
+    //     } else {
+    //         this.openDropdown();
+    //     }
+    // };
 
-    handleButtonKeyDown = (event: SyntheticKeyboardEvent<>) => {
-        const { activeItemIndex } = this.state;
+    // handleButtonKeyDown = (event: SyntheticKeyboardEvent<>) => {
+    //     const { activeItemIndex } = this.state;
 
-        // If user is interacting with the select dropdown, don't close on space/enter (i.e. prevent click event)
-        if ((event.key === ' ' || event.key === 'Enter') && activeItemIndex !== -1) {
-            event.preventDefault();
-        }
-    };
+    //     // If user is interacting with the select dropdown, don't close on space/enter (i.e. prevent click event)
+    //     if ((event.key === ' ' || event.key === 'Enter') && activeItemIndex !== -1) {
+    //         event.preventDefault();
+    //     }
+    // };
 
-    handleBlur = () => {
-        const { isOpen } = this.state;
-        if (isOpen) {
-            this.closeDropdown();
-        }
-    };
+    // handleKeyDown = (event: SyntheticKeyboardEvent<HTMLDivElement>) => {
+    //     const { options } = this.props;
+    //     const { activeItemIndex, isOpen } = this.state;
+    //     const itemCount = options.length;
 
-    handleKeyDown = (event: SyntheticKeyboardEvent<HTMLDivElement>) => {
-        const { options } = this.props;
-        const { activeItemIndex, isOpen } = this.state;
-        const itemCount = options.length;
+    //     switch (event.key) {
+    //         case 'ArrowDown':
+    //             stopDefaultEvent(event);
+    //             if (isOpen) {
+    //                 const nextIndex = activeItemIndex === itemCount - 1 ? -1 : activeItemIndex + 1;
+    //                 this.setActiveItem(nextIndex);
+    //             } else {
+    //                 this.openDropdown();
+    //             }
+    //             break;
+    //         case 'ArrowUp':
+    //             stopDefaultEvent(event);
+    //             if (isOpen) {
+    //                 const prevIndex = activeItemIndex === -1 ? itemCount - 1 : activeItemIndex - 1;
+    //                 this.setActiveItem(prevIndex);
+    //             } else {
+    //                 this.openDropdown();
+    //             }
+    //             break;
+    //         case 'Enter':
+    //         case ' ':
+    //             if (activeItemIndex !== -1 && isOpen) {
+    //                 stopDefaultEvent(event);
+    //                 this.selectOption(activeItemIndex);
+    //                 // Enter always closes dropdown (even for multiselect)
+    //                 if (event.key === 'Enter') {
+    //                     this.closeDropdown();
+    //                 }
+    //             }
+    //             break;
+    //         case 'Escape':
+    //             if (isOpen) {
+    //                 stopDefaultEvent(event);
+    //                 this.closeDropdown();
+    //             }
+    //             break;
+    //         // no default
+    //     }
+    // };
 
-        switch (event.key) {
-            case 'ArrowDown':
-                stopDefaultEvent(event);
-                if (isOpen) {
-                    const nextIndex = activeItemIndex === itemCount - 1 ? -1 : activeItemIndex + 1;
-                    this.setActiveItem(nextIndex);
-                } else {
-                    this.openDropdown();
-                }
-                break;
-            case 'ArrowUp':
-                stopDefaultEvent(event);
-                if (isOpen) {
-                    const prevIndex = activeItemIndex === -1 ? itemCount - 1 : activeItemIndex - 1;
-                    this.setActiveItem(prevIndex);
-                } else {
-                    this.openDropdown();
-                }
-                break;
-            case 'Enter':
-            case ' ':
-                if (activeItemIndex !== -1 && isOpen) {
-                    stopDefaultEvent(event);
-                    this.selectOption(activeItemIndex);
-                    // Enter always closes dropdown (even for multiselect)
-                    if (event.key === 'Enter') {
-                        this.closeDropdown();
-                    }
-                }
-                break;
-            case 'Escape':
-                if (isOpen) {
-                    stopDefaultEvent(event);
-                    this.closeDropdown();
-                }
-                break;
-            // no default
-        }
-    };
-
-    openDropdown = () => {
-        if (!this.state.isOpen) {
-            this.setState({ isOpen: true });
-        }
-    };
+    // openDropdown = () => {
+    //     if (!this.state.isOpen) {
+    //         this.setState({ isOpen: true });
+    //     }
+    // };
 
     closeDropdown = () => {
         if (this.state.isOpen) {
@@ -298,8 +290,8 @@ class BaseSelectField extends React.Component<Props, State> {
             'aria-owns': this.selectFieldID,
             className,
             isDisabled,
-            onClick: this.handleButtonClick,
-            onKeyDown: this.handleButtonKeyDown,
+            // onClick: this.handleButtonClick,
+            // onKeyDown: this.handleButtonKeyDown,
             // @NOTE: Technically, only text inputs should be combo-boxes but ARIA specs do not cover custom select dropdowns
             role: 'combobox',
             title: buttonText,
@@ -330,9 +322,9 @@ class BaseSelectField extends React.Component<Props, State> {
 
                     this.selectOption(index);
                 },
-                onMouseEnter: () => {
-                    this.setActiveItem(index, false);
-                },
+                // onMouseEnter: () => {
+                //     this.setActiveItem(index, false);
+                // },
                 setActiveItemID: this.setActiveItemID,
             };
 
@@ -343,12 +335,12 @@ class BaseSelectField extends React.Component<Props, State> {
             // The below actually does have a key, but eslint can't catch that
             /* eslint-disable react/jsx-key */
             return (
-                <DatalistItem {...itemProps}>
+                <MenuItem {...itemProps}>
                     <div className="select-option-check-icon">
                         {isSelected ? <IconCheck height={16} width={16} /> : null}
                     </div>
                     {optionRenderer ? optionRenderer(item) : displayText}
-                </DatalistItem>
+                </MenuItem>
             );
             /* eslint-enable react/jsx-key */
         });
@@ -362,7 +354,6 @@ class BaseSelectField extends React.Component<Props, State> {
 
     render() {
         const { className, multiple } = this.props;
-        const { isOpen } = this.state;
 
         // @TODO: Need invariants on specific conditions.
         // 1) # of options should be non-zero
@@ -374,34 +365,18 @@ class BaseSelectField extends React.Component<Props, State> {
         const listboxProps = {};
         if (multiple) {
             listboxProps['aria-multiselectable'] = true;
+            listboxProps.multiple = true;
         }
 
         return (
             // eslint-disable-next-line jsx-a11y/no-static-element-interactions
-            <div
-                className={classNames(className, 'select-container')}
-                onBlur={this.handleBlur}
-                onKeyDown={this.handleKeyDown}
-            >
-                <div className="select-field">
+            <div className={classNames(className, 'select-container')}>
+                <DropdownMenu className="select-field">
                     {this.renderSelectButton()}
-                    <div
-                        className={classNames(OVERLAY_WRAPPER_CLASS, {
-                            'is-visible': isOpen,
-                        })}
-                    >
-                        <ul
-                            className="overlay"
-                            id={this.selectFieldID}
-                            role="listbox"
-                            // preventDefault on mousedown so blur doesn't happen before click
-                            onMouseDown={event => event.preventDefault()}
-                            {...listboxProps}
-                        >
-                            {this.renderSelectOptions()}
-                        </ul>
-                    </div>
-                </div>
+                    <Menu role="listbox" {...listboxProps}>
+                        {this.renderSelectOptions()}
+                    </Menu>
+                </DropdownMenu>
             </div>
         );
     }
