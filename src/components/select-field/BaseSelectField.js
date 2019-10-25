@@ -352,7 +352,7 @@ class BaseSelectField extends React.Component<Props, State> {
                     <div className="select-option-check-icon">
                         {isSelected ? <IconCheck height={16} width={16} /> : null}
                     </div>
-                    {optionRenderer ? optionRenderer(item) : displayText}
+                    {optionRenderer ? optionRenderer(item) : <span title={displayText}>{displayText}</span>}
                 </DatalistItem>
             );
             /* eslint-enable react/jsx-key */

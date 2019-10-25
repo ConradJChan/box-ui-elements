@@ -1,31 +1,42 @@
 @import '../../styles/variables';
 
-.select-field {
-    .overlay {
-        min-width: 100%;
+.select-container {
+    max-width: 100%;
+
+    .select-field {
+        .overlay {
+            max-width: 100%;
+            border-radius: 4px;
+        }
+
+        li[role='separator'] {
+            margin: 10px 0;
+            border-bottom: 1px solid $bdl-gray-20;
+        }
     }
 
-    li[role='separator'] {
-        margin: 10px 0;
-        border-bottom: 1px solid $bdl-gray-20;
+    .select-option {
+        display: flex;
+        align-items: center;
+        white-space: nowrap;
+
+        span {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
     }
-}
 
-.select-option {
-    display: flex;
-    align-items: center;
-    white-space: nowrap;
-}
+    .select-option-check-icon {
+        flex: none;
+        width: 20px;
+        height: 16px;
+        margin-left: -5px;
+        text-align: left;
+    }
 
-.select-option-check-icon {
-    flex: none;
-    width: 20px;
-    height: 16px;
-    margin-left: -5px;
-    text-align: left;
-}
-
-.bdl-SelectField-overlay--scrollable {
-    max-height: 340px; // show at most 12 items in the dropdown menu
-    overflow-y: auto;
+    .bdl-SelectField-overlay--scrollable {
+        max-height: 340px; // show at most 12 items in the dropdown menu
+        overflow-y: auto;
+    }
 }
