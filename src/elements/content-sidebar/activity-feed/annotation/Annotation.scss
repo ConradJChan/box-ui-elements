@@ -1,0 +1,17 @@
+@import '../../../common/variables';
+
+// the comment container including inline error component
+.bcs-Annotation {
+    position: relative;
+    z-index: 1;
+}
+
+// the comment activity item
+.bcs-Annotation-media {
+    opacity: 1;
+    transition: opacity .33s;
+
+    &.bcs-is-pending {
+        opacity: .4;
+    }
+}

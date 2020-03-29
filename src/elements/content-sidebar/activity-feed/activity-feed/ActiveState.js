@@ -8,6 +8,7 @@ import getProp from 'lodash/get';
 import AppActivity from '../app-activity';
 import Comment from '../comment';
 import TaskNew from '../task-new';
+import Annotation from '../annotation/Annotation';
 import Version, { CollapsedVersion } from '../version';
 import withErrorHandling from '../../withErrorHandling';
 import type { FocusableFeedItemType, FeedItem, FeedItems } from '../../../../common/types/feed';
@@ -137,6 +138,15 @@ const ActiveState = ({
                                 data-testid="app-activity"
                             >
                                 <AppActivity currentUser={currentUser} onDelete={onAppActivityDelete} {...item} />
+                            </li>
+                        );
+                    case 'annotation':
+                        return (
+                            <li
+                                key={item.type + item.id}
+                                className={classNames('bcs-annotation-item', { 'bcs-is-active': isFocused })}
+                            >
+                                <Annotation {...item} />
                             </li>
                         );
                     default:

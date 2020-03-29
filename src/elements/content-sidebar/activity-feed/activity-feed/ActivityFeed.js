@@ -4,10 +4,12 @@
  */
 
 import * as React from 'react';
+import { withRouter, type RouterHistory } from 'react-router-dom';
 import getProp from 'lodash/get';
 import noop from 'lodash/noop';
 import { FormattedMessage } from 'react-intl';
 import classNames from 'classnames';
+import { withAnnotatorContext } from '../../../common/annotator-context';
 import { scrollIntoView } from '../../../../utils/dom';
 import ActiveState from './ActiveState';
 import CommentForm from '../comment-form';
@@ -26,6 +28,7 @@ type Props = {
     activeFeedEntryId?: string,
     activeFeedEntryType?: FocusableFeedItemType,
     activityFeedError: ?Errors,
+    annotator: Object,
     approverSelectorContacts?: SelectorItems<User | GroupMini>,
     currentUser?: User,
     feedItems?: FeedItems,
@@ -34,7 +37,9 @@ type Props = {
     getAvatarUrl: GetAvatarUrlCallback,
     getMentionWithQuery?: Function,
     getUserProfileUrl?: GetProfileUrlCallback,
+    history: RouterHistory,
     isDisabled?: boolean,
+    location: Object,
     mentionSelectorContacts?: SelectorItems<User>,
     onAppActivityDelete?: Function,
     onCommentCreate?: Function,
@@ -56,19 +61,22 @@ type State = {
 class ActivityFeed extends React.Component<Props, State> {
     state = {
         isInputOpen: false,
+        newAnnotation: null,
     };
 
     activeFeedItemRef = React.createRef<null | HTMLElement>();
 
     feedContainer: null | HTMLElement;
 
+    annotator;
+
     componentDidMount() {
         this.resetFeedScroll();
     }
 
     componentDidUpdate(prevProps: Props, prevState: State) {
-        const { currentUser: prevCurrentUser, feedItems: prevFeedItems } = prevProps;
-        const { feedItems: currFeedItems, activeFeedEntryId } = this.props;
+        const { annotator: prevAnnotator, currentUser: prevCurrentUser, feedItems: prevFeedItems } = prevProps;
+        const { annotator: currAnnotator, feedItems: currFeedItems, activeFeedEntryId, history, location } = this.props;
         const { isInputOpen: prevIsInputOpen } = prevState;
         const { isInputOpen: currIsInputOpen } = this.state;
 
@@ -84,6 +92,25 @@ class ActivityFeed extends React.Component<Props, State> {
         // do the scroll only once after first fetch of feed items
         if (didLoadFeedItems) {
             this.scrollToActiveFeedItemOrErrorMessage();
+        }
+
+        if (!prevAnnotator && currAnnotator) {
+            console.log(`Received annotator!`);
+            this.annotator = currAnnotator;
+            this.annotator.addListener('create', data => {
+                const { status, data: annotation } = data;
+                console.log('received annotation create event!', data);
+                this.setState({
+                    newAnnotation: { ...annotation, isPending: status === 'inprogress', type: 'annotation' },
+                });
+            });
+            this.annotator.addListener('selectionChange', annotationId => {
+                if (annotationId) {
+                    history.replace(`/activity/annotations/${annotationId}`);
+                } else if (location.pathname.startsWith('/activity')) {
+                    history.replace(`/activity`);
+                }
+            });
         }
     }
 
@@ -209,7 +236,7 @@ class ActivityFeed extends React.Component<Props, State> {
             activeFeedEntryId,
             activeFeedEntryType,
         } = this.props;
-        const { isInputOpen } = this.state;
+        const { isInputOpen, newAnnotation } = this.state;
         const hasCommentPermission = getProp(file, 'permissions.can_comment', false);
         const showCommentForm = !!(currentUser && hasCommentPermission && onCommentCreate && feedItems);
 
@@ -230,6 +257,13 @@ class ActivityFeed extends React.Component<Props, State> {
             : undefined;
 
         const isInlineFeedItemErrorVisible = !isLoading && activeFeedEntryType && !activeEntry;
+        if (newAnnotation && newAnnotation.isPending) {
+            feedItems.push(newAnnotation);
+        }
+        if (newAnnotation && !newAnnotation.isPending) {
+            feedItems.pop();
+            feedItems.push(newAnnotation);
+        }
 
         return (
             // eslint-disable-next-line
@@ -306,4 +340,4 @@ class ActivityFeed extends React.Component<Props, State> {
     }
 }
 
-export default ActivityFeed;
+export default withRouter(withAnnotatorContext(ActivityFeed));
