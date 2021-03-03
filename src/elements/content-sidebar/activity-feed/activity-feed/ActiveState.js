@@ -167,6 +167,8 @@ const ActiveState = ({
                                 className="bcs-activity-feed-annotation-activity"
                                 data-testid="annotation-activity"
                                 isFocused={isFocused}
+                                isInteractive
+                                onClick={() => onAnnotationSelect(item)}
                                 ref={refValue}
                             >
                                 <AnnotationActivity

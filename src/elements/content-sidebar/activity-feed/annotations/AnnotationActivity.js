@@ -5,9 +5,8 @@ import noop from 'lodash/noop';
 import * as React from 'react';
 import ActivityError from '../common/activity-error';
 import ActivityMessage from '../common/activity-message';
-import ActivityTimestamp from '../common/activity-timestamp';
-import AnnotationActivityLink from './AnnotationActivityLink';
 import AnnotationActivityMenu from './AnnotationActivityMenu';
+import AnnotationActivityTimestamp from './AnnotationActivityTimestamp';
 import Avatar from '../Avatar';
 import CommentForm from '../comment-form/CommentForm';
 import Media from '../../../../components/media';
@@ -70,7 +69,6 @@ const AnnotationActivity = ({
         onEdit(id, text, permissions);
     };
 
-    const createdAtTimestamp = new Date(created_at).getTime();
     const createdByUser = created_by || PLACEHOLDER_USER;
     const { can_delete: canDelete, can_edit: canEdit } = permissions;
     const isFileVersionUnavailable = file_version === null;
@@ -111,7 +109,16 @@ const AnnotationActivity = ({
                         />
                     </div>
                     <div>
-                        <ActivityTimestamp date={createdAtTimestamp} />
+                        <AnnotationActivityTimestamp
+                            data-resin-iscurrent={isCurrentVersion}
+                            data-resin-itemid={id}
+                            data-resin-target="annotationLink"
+                            createdAt={created_at}
+                            id={id}
+                            isDisabled={isFileVersionUnavailable}
+                            message={activityLinkMessage}
+                            onClick={handleOnSelect}
+                        />
                     </div>
                     {isEditing && currentUser ? (
                         <CommentForm
@@ -130,7 +137,7 @@ const AnnotationActivity = ({
                     ) : (
                         <ActivityMessage id={id} tagged_message={message} getUserProfileUrl={getUserProfileUrl} />
                     )}
-                    <AnnotationActivityLink
+                    {/* <AnnotationActivityLink
                         data-resin-iscurrent={isCurrentVersion}
                         data-resin-itemid={id}
                         data-resin-target="annotationLink"
@@ -138,7 +145,7 @@ const AnnotationActivity = ({
                         isDisabled={isFileVersionUnavailable}
                         message={activityLinkMessage}
                         onClick={handleOnSelect}
-                    />
+                    /> */}
                 </Media.Body>
             </Media>
             {/* $FlowFixMe */}
