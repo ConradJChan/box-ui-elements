@@ -16,17 +16,20 @@ import {
     ORIGIN_ACTIVITY_SIDEBAR,
     ORIGIN_DETAILS_SIDEBAR,
     ORIGIN_METADATA_SIDEBAR,
+    ORIGIN_REPLIES_SIDEBAR,
     ORIGIN_SKILLS_SIDEBAR,
     ORIGIN_VERSIONS_SIDEBAR,
     SIDEBAR_VIEW_ACTIVITY,
     SIDEBAR_VIEW_DETAILS,
     SIDEBAR_VIEW_METADATA,
+    SIDEBAR_VIEW_REPLIES,
     SIDEBAR_VIEW_SKILLS,
     SIDEBAR_VIEW_VERSIONS,
 } from '../../constants';
 import type { DetailsSidebarProps } from './DetailsSidebar';
 import type { ActivitySidebarProps } from './ActivitySidebar';
 import type { MetadataSidebarProps } from './MetadataSidebar';
+import type { RepliesSidebarProps } from './replies';
 import type { VersionsSidebarProps } from './versions';
 import type { User, BoxItem } from '../../common/types/core';
 
@@ -42,6 +45,7 @@ type Props = {
     hasActivity: boolean,
     hasDetails: boolean,
     hasMetadata: boolean,
+    hasReplies: boolean,
     hasSkills: boolean,
     hasVersions: boolean,
     isOpen: boolean,
@@ -49,6 +53,7 @@ type Props = {
     onAnnotationSelect?: Function,
     onVersionChange?: Function,
     onVersionHistoryClick?: Function,
+    repliesSidebarProps: RepliesSidebarProps,
     versionsSidebarProps: VersionsSidebarProps,
 };
 
@@ -62,10 +67,11 @@ type ElementRefType = {
 
 // TODO: place into code splitting logic
 const BASE_EVENT_NAME = '_JS_LOADING';
-const MARK_NAME_JS_LOADING_DETAILS = `${ORIGIN_DETAILS_SIDEBAR}${BASE_EVENT_NAME}`;
 const MARK_NAME_JS_LOADING_ACTIVITY = `${ORIGIN_ACTIVITY_SIDEBAR}${BASE_EVENT_NAME}`;
-const MARK_NAME_JS_LOADING_SKILLS = `${ORIGIN_SKILLS_SIDEBAR}${BASE_EVENT_NAME}`;
+const MARK_NAME_JS_LOADING_DETAILS = `${ORIGIN_DETAILS_SIDEBAR}${BASE_EVENT_NAME}`;
 const MARK_NAME_JS_LOADING_METADATA = `${ORIGIN_METADATA_SIDEBAR}${BASE_EVENT_NAME}`;
+const MARK_NAME_JS_LOADING_REPLIES = `${ORIGIN_REPLIES_SIDEBAR}${BASE_EVENT_NAME}`;
+const MARK_NAME_JS_LOADING_SKILLS = `${ORIGIN_SKILLS_SIDEBAR}${BASE_EVENT_NAME}`;
 const MARK_NAME_JS_LOADING_VERSIONS = `${ORIGIN_VERSIONS_SIDEBAR}${BASE_EVENT_NAME}`;
 
 const URL_TO_FEED_ITEM_TYPE = { annotations: 'annotation', comments: 'comment', tasks: 'task' };
@@ -84,6 +90,7 @@ const LoadableVersionsSidebar = SidebarUtils.getAsyncSidebarContent(
     SIDEBAR_VIEW_VERSIONS,
     MARK_NAME_JS_LOADING_VERSIONS,
 );
+const LoadableRepliesSidebar = SidebarUtils.getAsyncSidebarContent(SIDEBAR_VIEW_REPLIES, MARK_NAME_JS_LOADING_REPLIES);
 
 class SidebarPanels extends React.Component<Props, State> {
     activitySidebar: ElementRefType = React.createRef();
@@ -91,6 +98,8 @@ class SidebarPanels extends React.Component<Props, State> {
     detailsSidebar: ElementRefType = React.createRef();
 
     metadataSidebar: ElementRefType = React.createRef();
+
+    repliesSidebar: ElementRefType = React.createRef();
 
     state: State = { isInitialized: false };
 
@@ -108,6 +117,7 @@ class SidebarPanels extends React.Component<Props, State> {
         const { current: activitySidebar } = this.activitySidebar;
         const { current: detailsSidebar } = this.detailsSidebar;
         const { current: metadataSidebar } = this.metadataSidebar;
+        const { current: repliesSidebar } = this.repliesSidebar;
         const { current: versionsSidebar } = this.versionsSidebar;
 
         if (activitySidebar) {
@@ -120,6 +130,10 @@ class SidebarPanels extends React.Component<Props, State> {
 
         if (metadataSidebar) {
             metadataSidebar.refresh();
+        }
+
+        if (repliesSidebar) {
+            repliesSidebar.refresh();
         }
 
         if (versionsSidebar) {
@@ -140,6 +154,7 @@ class SidebarPanels extends React.Component<Props, State> {
             hasActivity,
             hasDetails,
             hasMetadata,
+            hasReplies,
             hasSkills,
             hasVersions,
             isOpen,
@@ -147,12 +162,13 @@ class SidebarPanels extends React.Component<Props, State> {
             onAnnotationSelect,
             onVersionChange,
             onVersionHistoryClick,
+            repliesSidebarProps,
             versionsSidebarProps,
         }: Props = this.props;
 
         const { isInitialized } = this.state;
 
-        if (!isOpen || (!hasActivity && !hasDetails && !hasMetadata && !hasSkills && !hasVersions)) {
+        if (!isOpen || (!hasActivity && !hasDetails && !hasMetadata && !hasReplies && !hasSkills && !hasVersions)) {
             return null;
         }
 
@@ -257,6 +273,24 @@ class SidebarPanels extends React.Component<Props, State> {
                                 ref={this.versionsSidebar}
                                 versionId={match.params.versionId}
                                 {...versionsSidebarProps}
+                            />
+                        )}
+                    />
+                )}
+                {hasReplies && (
+                    <Route
+                        exact
+                        path={[
+                            `/${SIDEBAR_VIEW_ACTIVITY}/:activeFeedEntryType(annotations)/:fileVersionId/:activeFeedEntryId/${SIDEBAR_VIEW_REPLIES}/:replyId?`,
+                            `/${SIDEBAR_VIEW_ACTIVITY}/:activeFeedEntryType(comments|tasks)/:activeFeedEntryId/${SIDEBAR_VIEW_REPLIES}/:replyId?`,
+                        ]}
+                        render={() => (
+                            <LoadableRepliesSidebar
+                                fileId={fileId}
+                                hasSidebarInitialized={isInitialized}
+                                ref={this.repliesSidebar}
+                                startMarkName={MARK_NAME_JS_LOADING_REPLIES}
+                                {...repliesSidebarProps}
                             />
                         )}
                     />

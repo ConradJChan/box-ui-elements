@@ -12,10 +12,11 @@ import SidebarLoadingError from './SidebarLoadingError';
 import { hasSkills as hasSkillsData } from './skills/skillUtils';
 import { mark } from '../../utils/performance';
 import {
-    SIDEBAR_VIEW_SKILLS,
     SIDEBAR_VIEW_ACTIVITY,
-    SIDEBAR_VIEW_METADATA,
     SIDEBAR_VIEW_DETAILS,
+    SIDEBAR_VIEW_METADATA,
+    SIDEBAR_VIEW_REPLIES,
+    SIDEBAR_VIEW_SKILLS,
     SIDEBAR_VIEW_VERSIONS,
 } from '../../constants';
 import type { MetadataSidebarProps } from './MetadataSidebar';
@@ -181,6 +182,9 @@ class SidebarUtils {
                 break;
             case SIDEBAR_VIEW_VERSIONS:
                 importFn = import(/* webpackMode: "lazy", webpackChunkName: "versions-sidebar" */ './versions');
+                break;
+            case SIDEBAR_VIEW_REPLIES:
+                importFn = import(/* webpackMode: "lazy", webpackChunkName: "replies-sidebar" */ './replies');
                 break;
             default:
                 return Promise.resolve(null);

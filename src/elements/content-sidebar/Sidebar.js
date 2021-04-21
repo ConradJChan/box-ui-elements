@@ -265,6 +265,7 @@ class Sidebar extends React.Component<Props, State> {
                             hasActivity={hasActivity}
                             hasDetails={hasDetails}
                             hasMetadata={hasMetadata}
+                            hasReplies
                             hasSkills={hasSkills}
                             hasVersions={hasVersions}
                             isOpen={isOpen}
