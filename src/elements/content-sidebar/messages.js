@@ -7,6 +7,11 @@
 import { defineMessages } from 'react-intl';
 
 const messages = defineMessages({
+    reply: {
+        id: 'be.contentSidebar.reply',
+        defaultMessage: 'Reply',
+        description: 'Text for reply button for activity item',
+    },
     tasksAddTask: {
         id: 'be.contentSidebar.addTask',
         defaultMessage: 'Add Task',

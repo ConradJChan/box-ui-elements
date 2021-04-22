@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import getProp from 'lodash/get';
 import noop from 'lodash/noop';
 import TetherComponent from 'react-tether';
+import { generatePath, useHistory } from 'react-router-dom';
 import ActivityError from '../common/activity-error';
 import ActivityMessage from '../common/activity-message';
 import ActivityTimestamp from '../common/activity-timestamp';
@@ -14,10 +15,12 @@ import CommentForm from '../comment-form/CommentForm';
 import DeleteConfirmation from '../common/delete-confirmation';
 import Media from '../../../../components/media';
 import messages from './messages';
+import ReplyButton from '../../ReplyButton';
 import SelectableActivityCard from '../SelectableActivityCard';
 import UserLink from '../common/user-link';
 import { ACTIVITY_TARGETS } from '../../../common/interactionTargets';
 import { PLACEHOLDER_USER } from '../../../../constants';
+import { REPLIES_ANNOTATIONS } from '../../routes';
 import type { Annotation, AnnotationPermission } from '../../../../common/types/feed';
 import type { GetAvatarUrlCallback, GetProfileUrlCallback } from '../../../common/flowTypes';
 import type { SelectorItems, User } from '../../../../common/types/core';
@@ -49,6 +52,7 @@ const AnnotationActivity = ({
     onEdit = noop,
     onSelect = noop,
 }: Props) => {
+    const history = useHistory();
     const [isConfirmingDelete, setIsConfirmingDelete] = React.useState(false);
     const [isEditing, setIsEditing] = React.useState(false);
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
@@ -57,6 +61,12 @@ const AnnotationActivity = ({
     const isFileVersionUnavailable = file_version === null;
     const isCardDisabled = !!error || isConfirmingDelete || isMenuOpen || isEditing || isFileVersionUnavailable;
     const isMenuVisible = (canDelete || canEdit) && !isPending;
+    const repliesPath = generatePath(REPLIES_ANNOTATIONS, {
+        activeFeedEntryId: id,
+        activeFeedEntryType: 'annotations',
+        fileVersionId: getProp(file_version, 'id'),
+        sidebar: 'activity',
+    });
 
     const handleDelete = (): void => setIsConfirmingDelete(true);
     const handleDeleteCancel = (): void => setIsConfirmingDelete(false);
@@ -81,6 +91,14 @@ const AnnotationActivity = ({
         // detecting mouse events on the document outside of annotation targets to determine when to
         // deselect annotations
         event.stopPropagation();
+    };
+    const handleReplyClick = (event: React.SyntheticEvent<HTMLButton>) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        history.push(repliesPath);
+
+        onSelect(item, { skipNavigation: true }); // Select the annotation without changing the history location
     };
     const handleSelect = () => onSelect(item);
 
@@ -156,6 +174,9 @@ const AnnotationActivity = ({
                         ) : (
                             <ActivityMessage id={id} tagged_message={message} getUserProfileUrl={getUserProfileUrl} />
                         )}
+                        <div className="bcs-AnnotationActivity-reply">
+                            <ReplyButton onClick={handleReplyClick} />
+                        </div>
                     </Media.Body>
                 </Media>
                 {/* $FlowFixMe */}

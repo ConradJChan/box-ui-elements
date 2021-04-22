@@ -7,6 +7,7 @@
 import * as React from 'react';
 import flow from 'lodash/flow';
 import { Redirect, Route, Switch } from 'react-router-dom';
+import * as routes from './routes';
 import SidebarUtils from './SidebarUtils';
 import withSidebarAnnotations from './withSidebarAnnotations';
 import { withAnnotatorContext } from '../common/annotator-context';
@@ -177,7 +178,7 @@ class SidebarPanels extends React.Component<Props, State> {
                 {hasSkills && (
                     <Route
                         exact
-                        path={`/${SIDEBAR_VIEW_SKILLS}`}
+                        path={routes.SKILLS}
                         render={() => (
                             <LoadableSkillsSidebar
                                 elementId={elementId}
@@ -196,11 +197,7 @@ class SidebarPanels extends React.Component<Props, State> {
                 {hasActivity && (
                     <Route
                         exact
-                        path={[
-                            `/${SIDEBAR_VIEW_ACTIVITY}`,
-                            `/${SIDEBAR_VIEW_ACTIVITY}/:activeFeedEntryType(annotations)/:fileVersionId/:activeFeedEntryId?`,
-                            `/${SIDEBAR_VIEW_ACTIVITY}/:activeFeedEntryType(comments|tasks)/:activeFeedEntryId?`,
-                        ]}
+                        path={[routes.ACTIVITY_BASE, routes.ACTIVITY_ANNOTATIONS, routes.ACTIVITY_COMMENTS_TASKS]}
                         render={({ match }) => {
                             const matchEntryType = match.params.activeFeedEntryType;
                             const activeFeedEntryType = matchEntryType
@@ -228,7 +225,7 @@ class SidebarPanels extends React.Component<Props, State> {
                 {hasDetails && (
                     <Route
                         exact
-                        path={`/${SIDEBAR_VIEW_DETAILS}`}
+                        path={routes.DETAILS}
                         render={() => (
                             <LoadableDetailsSidebar
                                 elementId={elementId}
@@ -247,7 +244,7 @@ class SidebarPanels extends React.Component<Props, State> {
                 {hasMetadata && (
                     <Route
                         exact
-                        path={`/${SIDEBAR_VIEW_METADATA}`}
+                        path={routes.METADATA}
                         render={() => (
                             <LoadableMetadataSidebar
                                 elementId={elementId}
@@ -262,7 +259,7 @@ class SidebarPanels extends React.Component<Props, State> {
                 )}
                 {hasVersions && (
                     <Route
-                        path="/:sidebar(activity|details)/versions/:versionId?"
+                        path={routes.VERSIONS}
                         render={({ match }) => (
                             <LoadableVersionsSidebar
                                 fileId={fileId}
@@ -280,10 +277,7 @@ class SidebarPanels extends React.Component<Props, State> {
                 {hasReplies && (
                     <Route
                         exact
-                        path={[
-                            `/${SIDEBAR_VIEW_ACTIVITY}/:activeFeedEntryType(annotations)/:fileVersionId/:activeFeedEntryId/${SIDEBAR_VIEW_REPLIES}/:replyId?`,
-                            `/${SIDEBAR_VIEW_ACTIVITY}/:activeFeedEntryType(comments|tasks)/:activeFeedEntryId/${SIDEBAR_VIEW_REPLIES}/:replyId?`,
-                        ]}
+                        path={[routes.REPLIES_ANNOTATIONS, routes.REPLIES_COMMENTS_TASKS]}
                         render={() => (
                             <LoadableRepliesSidebar
                                 fileId={fileId}

@@ -133,9 +133,15 @@ class ActivitySidebar extends React.PureComponent<Props, State> {
     }
 
     componentDidMount() {
-        const { currentUser } = this.props;
+        const { activeFeedEntryId, activeFeedEntryType, currentUser, emitAnnotatorActiveChangeEvent } = this.props;
         this.fetchFeedItems(true);
         this.fetchCurrentUser(currentUser);
+
+        // Ensure that when the sidebar is mounted, any annotation marked as active in the feed
+        // is also marked as active in box-annotations
+        if (activeFeedEntryType === 'annotation' && activeFeedEntryId) {
+            emitAnnotatorActiveChangeEvent(activeFeedEntryId);
+        }
     }
 
     handleAnnotationDelete = ({ id, permissions }: { id: string, permissions: AnnotationPermission }) => {
@@ -620,7 +626,7 @@ class ActivitySidebar extends React.PureComponent<Props, State> {
         return api.getUsersAPI(false).getAvatarUrlWithAccessToken(userId, file.id);
     };
 
-    handleAnnotationSelect = (annotation: Annotation): void => {
+    handleAnnotationSelect = (annotation: Annotation, { skipNavigation = false } = {}): void => {
         const { file_version, id: nextActiveAnnotationId } = annotation;
         const {
             emitAnnotatorActiveChangeEvent,
@@ -638,7 +644,7 @@ class ActivitySidebar extends React.PureComponent<Props, State> {
 
         emitAnnotatorActiveChangeEvent(nextActiveAnnotationId);
 
-        if (annotationFileVersionId && annotationFileVersionId !== selectedFileVersionId) {
+        if (!skipNavigation && annotationFileVersionId && annotationFileVersionId !== selectedFileVersionId) {
             history.push(getAnnotationsPath(annotationFileVersionId, nextActiveAnnotationId));
         }
 

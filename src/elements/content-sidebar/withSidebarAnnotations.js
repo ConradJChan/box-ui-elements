@@ -68,6 +68,9 @@ export default function withSidebarAnnotations(
             const isAnnotationsPath = !!match;
             const isTransitioningToAnnotationPath = activeAnnotationId && !isAnnotationsPath;
             const prevFileVersionId = getProp(prevMatch, 'params.fileVersionId');
+            const isReplyPath = location.pathname.indexOf('/replies') !== -1;
+            const shouldUpdateLocation =
+                hasActiveAnnotationChanged && !isReplyPath && (isAnnotationsPath || isTransitioningToAnnotationPath);
 
             if (annotation && prevAnnotation !== annotation) {
                 this.addAnnotation();
@@ -76,7 +79,7 @@ export default function withSidebarAnnotations(
             // Active annotation id changed. If location is currently an annotation path or
             // if location is not currently an annotation path but the active annotation id
             // transitioned from falsy to truthy, update the location accordingly
-            if (hasActiveAnnotationChanged && (isAnnotationsPath || isTransitioningToAnnotationPath)) {
+            if (shouldUpdateLocation) {
                 this.updateActiveAnnotation();
             }
 
