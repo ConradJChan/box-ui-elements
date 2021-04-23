@@ -35,6 +35,7 @@ type Props = {
     onCancel: Function,
     onFocus?: Function,
     onSubmit?: Function,
+    placeholder?: string,
     showTip?: boolean,
     tagged_message?: string,
     updateComment?: Function,
@@ -117,11 +118,13 @@ class CommentForm extends React.Component<Props, State> {
             tagged_message,
             getAvatarUrl,
             showTip = true,
+            placeholder,
         } = this.props;
         const { commentEditorState } = this.state;
         const inputContainerClassNames = classNames('bcs-CommentForm', className, {
             'bcs-is-open': isOpen,
         });
+        const placeholderMessage = placeholder || formatMessage(messages.commentWrite);
 
         return (
             <Media className={inputContainerClassNames}>
@@ -145,7 +148,7 @@ class CommentForm extends React.Component<Props, State> {
                             onChange={this.onMentionSelectorChangeHandler}
                             onFocus={onFocus}
                             onMention={getMentionWithQuery}
-                            placeholder={tagged_message ? undefined : formatMessage(messages.commentWrite)}
+                            placeholder={tagged_message ? undefined : placeholderMessage}
                             validateOnBlur={false}
                         />
                         {showTip && (

@@ -280,7 +280,9 @@ class SidebarPanels extends React.Component<Props, State> {
                         path={[routes.REPLIES_ANNOTATIONS, routes.REPLIES_COMMENTS_TASKS]}
                         render={() => (
                             <LoadableRepliesSidebar
-                                fileId={fileId}
+                                currentUser={currentUser}
+                                elementId={elementId}
+                                file={file}
                                 hasSidebarInitialized={isInitialized}
                                 ref={this.repliesSidebar}
                                 startMarkName={MARK_NAME_JS_LOADING_REPLIES}
