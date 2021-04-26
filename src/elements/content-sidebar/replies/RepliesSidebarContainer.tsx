@@ -21,7 +21,7 @@ type Annotation = {
     type: 'annotation';
 };
 
-type Message = {
+export type Message = {
     id: string;
     // eslint-disable-next-line camelcase
     created_at: string;
@@ -39,6 +39,9 @@ export type Props = {
     currentUser?: object;
     elementId?: string;
     file: object;
+    getUserProfileUrl?: Function;
+    onCommentDelete: Function;
+    onCommentEdit: Function;
 };
 
 const mockedReply = {
@@ -58,7 +61,7 @@ const mockedReply = {
     type: 'reply' as const,
 } as Message;
 
-const RepliesSidebarContainer = ({ currentUser, elementId, file }: Props): JSX.Element => {
+const RepliesSidebarContainer = ({ currentUser, elementId, file, ...rest }: Props): JSX.Element => {
     const api = React.useContext(APIContext);
     const { activeFeedEntryId, activeFeedEntryType } = useParams();
     const [isLoading, setIsLoading] = React.useState(false);
@@ -120,6 +123,13 @@ const RepliesSidebarContainer = ({ currentUser, elementId, file }: Props): JSX.E
                     type: 'parent' as const,
                 },
                 mockedReply,
+                { ...mockedReply, id: '123123124' },
+                { ...mockedReply, id: '123123125' },
+                { ...mockedReply, id: '123123126' },
+                { ...mockedReply, id: '123123127' },
+                { ...mockedReply, id: '123123128' },
+                { ...mockedReply, id: '123123129' },
+                { ...mockedReply, id: '123123130' },
             ]);
 
             setIsLoading(false);
@@ -164,6 +174,7 @@ const RepliesSidebarContainer = ({ currentUser, elementId, file }: Props): JSX.E
             isLoading={isLoading}
             mentionSelectorContacts={mentionSelectorContacts}
             messages={messages}
+            {...rest}
         />
     );
 };

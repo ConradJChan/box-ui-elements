@@ -67,6 +67,7 @@ type Props = {
     onAnnotationSelect?: Function,
     onVersionChange?: Function,
     onVersionHistoryClick?: Function,
+    repliesSidebarProps: Object,
     requestInterceptor?: Function,
     responseInterceptor?: Function,
     sharedLink?: string,
@@ -110,6 +111,7 @@ class ContentSidebar extends React.Component<Props, State> {
         hasSkills: false,
         isDefaultOpen: true,
         metadataSidebarProps: {},
+        repliesSidebarProps: {},
     };
 
     /**
@@ -336,6 +338,7 @@ class ContentSidebar extends React.Component<Props, State> {
             onAnnotationSelect,
             onVersionChange,
             onVersionHistoryClick,
+            repliesSidebarProps,
             versionsSidebarProps,
         }: Props = this.props;
         const { file, isLoading, metadataEditors }: State = this.state;
@@ -371,6 +374,7 @@ class ContentSidebar extends React.Component<Props, State> {
                             onAnnotationSelect={onAnnotationSelect}
                             onVersionChange={onVersionChange}
                             onVersionHistoryClick={onVersionHistoryClick}
+                            repliesSidebarProps={repliesSidebarProps}
                             versionsSidebarProps={versionsSidebarProps}
                             wrappedComponentRef={ref => {
                                 this.sidebarRef = ref;

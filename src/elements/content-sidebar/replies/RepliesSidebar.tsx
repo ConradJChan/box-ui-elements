@@ -1,6 +1,9 @@
 import * as React from 'react';
+import classNames from 'classnames';
 import { FormattedMessage, MessageDescriptor } from 'react-intl';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
+// @ts-ignore flow import
+import Comment from '../activity-feed/comment';
 // @ts-ignore flow import
 import CommentForm from '../activity-feed/comment-form';
 import repliesMessages from './messages';
@@ -10,6 +13,7 @@ import SidebarContent from '../SidebarContent';
 import { BackButton } from '../../common/nav-button';
 // @ts-ignore flow import
 import { LoadingIndicatorWrapper } from '../../../components/loading-indicator';
+import { Message } from './RepliesSidebarContainer';
 // @ts-ignore flow import
 import { SIDEBAR_VIEW_REPLIES } from '../../../constants';
 
@@ -22,9 +26,12 @@ export type Props = {
     fileId: string;
     getAvatarUrl?: Function;
     getMentionWithQuery?: Function;
+    getUserProfileUrl?: Function;
     isLoading: boolean;
     mentionSelectorContacts: Array<object>;
-    messages: Array<object>;
+    messages: Array<Message>;
+    onCommentDelete: Function;
+    onCommentEdit: Function;
 };
 
 const RepliesSidebar = (props: Props, ref: React.Ref<SidebarContent>): JSX.Element => {
@@ -35,9 +42,12 @@ const RepliesSidebar = (props: Props, ref: React.Ref<SidebarContent>): JSX.Eleme
         fileId,
         getAvatarUrl,
         getMentionWithQuery,
+        getUserProfileUrl,
         isLoading,
         mentionSelectorContacts,
         messages,
+        onCommentDelete,
+        onCommentEdit,
     } = props;
     // TODO: need to upgrade react-router-dom to 5.1.x
     const history = useHistory();
@@ -65,10 +75,33 @@ const RepliesSidebar = (props: Props, ref: React.Ref<SidebarContent>): JSX.Eleme
         >
             <LoadingIndicatorWrapper className="bcs-Replies-content" crawlerPosition="top" isLoading={isLoading}>
                 <>
-                    <div className="bcs-Replies-list">
-                        {`Content, came from pathname=${pathname}, replyId=${replyId}`}
-                        <pre>{JSON.stringify(messages, undefined, '  ')}</pre>
-                    </div>
+                    <ul className="bcs-Replies-list">
+                        {messages.map(({ id, message, ...rest }) => {
+                            const isFocused = id === replyId;
+                            return (
+                                <li
+                                    key={id}
+                                    className={classNames('bcs-Replies-list-item', { 'bcs-is-focused': isFocused })}
+                                >
+                                    <Comment
+                                        {...rest}
+                                        currentUser={currentUser}
+                                        getAvatarUrl={getAvatarUrl}
+                                        getMentionWithQuery={getMentionWithQuery}
+                                        getUserProfileUrl={getUserProfileUrl}
+                                        mentionSelectorContacts={mentionSelectorContacts}
+                                        onDelete={onCommentDelete}
+                                        onEdit={onCommentEdit}
+                                        permissions={{
+                                            can_delete: true,
+                                            can_edit: true,
+                                        }}
+                                        tagged_message={message}
+                                    />
+                                </li>
+                            );
+                        })}
+                    </ul>
                     <CommentForm
                         className="bcs-Replies-editor"
                         createComment={handleFormSubmit}

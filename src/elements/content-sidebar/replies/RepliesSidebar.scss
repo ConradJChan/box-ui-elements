@@ -1,4 +1,20 @@
+@import '../../common/variables';
+
+@keyframes bcs-ActivityItem-callout {
+    0%,
+    100% {
+        background-color: transparent;
+    }
+
+    30%,
+    70% {
+        background-color: $bdl-box-blue-05;
+    }
+}
+
 .bcs-Replies {
+    $container-padding: 25px;
+
     .bdl-BackButton {
         margin-right: 5px;
     }
@@ -16,5 +32,48 @@
 
     .bcs-Replies-list {
         flex: 1 1 auto;
+        margin-top: 8px;
+        overflow-y: scroll;
+    }
+
+    .bcs-Replies-list-item {
+        $container-padding: 25px;
+        $container-transition-delay: 25ms;
+        $container-transition-duration: 200ms;
+
+        position: relative;
+        transition: box-shadow $container-transition-duration ease $container-transition-delay;
+
+        &:last-child {
+            box-shadow: 0 $container-padding 0 -#{$container-padding - 1} $bdl-gray-10;
+        }
+
+        &:not(:last-child) {
+            &::before {
+                position: absolute;
+                top: 58px;
+                bottom: -8px;
+                left: 39px;
+                width: 2px;
+                border: solid 1px #eaeaea;
+                content: '';
+            }
+        }
+
+        &.bcs-is-focused {
+            .bcs-ActivityCard {
+                box-shadow: 0 0 $bdl-grid-unit * 4 $bdl-gray-30;
+                animation: bcs-ActivityItem-callout 1s ease-in-out $container-transition-delay 0 normal none; // Disabled by default
+
+                &:not(:focus-within) {
+                    animation-iteration-count: 1; // Only play the animation if the user is not interacting directly with the element or its descendents
+                    animation-fill-mode: forwards;
+                }
+            }
+        }
+    }
+
+    .bcs-ActivityCard {
+        padding: 16px 25px;
     }
 }

@@ -52,6 +52,7 @@ type Props = {
     onAnnotationSelect?: Function,
     onVersionChange?: Function,
     onVersionHistoryClick?: Function,
+    repliesSidebarProps: {},
     versionsSidebarProps: VersionsSidebarProps,
 };
 
@@ -222,6 +223,7 @@ class Sidebar extends React.Component<Props, State> {
             metadataSidebarProps,
             onAnnotationSelect,
             onVersionChange,
+            repliesSidebarProps,
             versionsSidebarProps,
         }: Props = this.props;
         const isOpen = this.isForcedSet() ? this.isForcedOpen() : !!isDefaultOpen;
@@ -275,6 +277,7 @@ class Sidebar extends React.Component<Props, State> {
                             onVersionChange={onVersionChange}
                             onVersionHistoryClick={onVersionHistoryClick}
                             ref={this.sidebarPanels}
+                            repliesSidebarProps={repliesSidebarProps}
                             versionsSidebarProps={versionsSidebarProps}
                         />
                     </>
